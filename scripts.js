@@ -1,8 +1,3 @@
-const posts = [
-    { title: "My First Post", url: "post1.html", date: "2025-08-08" },
-    // Add more posts here
-];
-
 fetch("posts.json")
     .then(response => response.json())
     .then(posts => {
@@ -10,7 +5,8 @@ fetch("posts.json")
         posts.forEach(post => {
             const postLink = document.createElement("a");
             postLink.href = post.url;
-            postLink.textContent = `${post.title} (${post.date})`;
+            postLink.textContent = `${post.title} (${new Date(post.date).toDateString()})`;
             postList.appendChild(postLink);
         });
-    });
+    })
+    .catch(error => console.error("Error loading posts:", error));
