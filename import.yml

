@@ -1,0 +1,21 @@
+name: Import Blogger Posts
+on:
+  schedule:
+    - cron: "0 * * * *" # Runs hourly
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - run: npm install axios xml2js
+      - run: node scripts/import.js
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add posts/ posts.json
+          git commit -m "Update posts from Blogger" || echo "No changes"
+          git push
