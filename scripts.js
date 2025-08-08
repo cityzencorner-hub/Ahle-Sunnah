@@ -3,10 +3,14 @@ const posts = [
     // Add more posts here
 ];
 
-const postList = document.getElementById("post-list");
-posts.forEach(post => {
-    const postLink = document.createElement("a");
-    postLink.href = post.url;
-    postLink.textContent = `${post.title} (${post.date})`;
-    postList.appendChild(postLink);
-});
+fetch("posts.json")
+    .then(response => response.json())
+    .then(posts => {
+        const postList = document.getElementById("post-list");
+        posts.forEach(post => {
+            const postLink = document.createElement("a");
+            postLink.href = post.url;
+            postLink.textContent = `${post.title} (${post.date})`;
+            postList.appendChild(postLink);
+        });
+    });
