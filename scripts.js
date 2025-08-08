@@ -1,6 +1,5 @@
-// Example: Hardcoded post list (replace with dynamic fetching if using a backend)
 const posts = [
-    { title: "My First Post", url: "posts/post1.html", date: "2025-08-08" },
+    { title: "My First Post", url: "post1.html", date: "2025-08-08" },
     // Add more posts here
 ];
 
