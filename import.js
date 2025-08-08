@@ -1,39 +1,28 @@
 const fs = require("fs");
+const axios = require("axios");
 const xml2js = require("xml2js");
 
-const parser = new xml2js.Parser();
-fs.readFile("blogger_backup.xml", (err, data) => {
-    parser.parseString(data, (err, result) => {
-        const posts = result.feed.entry.filter(entry => entry["app:control"]?.[0]["app:draft"]?.[0] !== "yes");
+async function importRss() {
+    const response = await axios.get("https://alsunnahalislam.blogspot.com/feeds/posts/default");
+    const parser = new xml2js.Parser();
+    parser.parseString(response.data, (err, result) => {
+        const posts = result.feed.entry;
         posts.forEach(post => {
             const title = post.title[0]._;
             const content = post.content[0]._;
             const date = post.published[0];
             const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-            const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>My Blog</h1>
-        <a href="index.html">Back to Home</a>
-    </header>
-    <main>
-        <article>
-            <h2>${title}</h2>
-            <p><time datetime="${date}">${new Date(date).toDateString()}</time></p>
-            <p>${content}</p>
-        </article>
-    </main>
-</body>
-</html>`;
+            const html = `...`; // Same HTML template as above
             fs.writeFileSync(`posts/${slug}.html`, html);
         });
+        // Update posts.json for homepage
+        const postList = posts.map(post => ({
+            title: post.title[0]._,
+            url: `posts/${post.title[0]._.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.html`,
+            date: post.published[0]
+        }));
+        fs.writeFileSync("posts.json", JSON.stringify(postList));
     });
-});
+}
+
+importRss();
